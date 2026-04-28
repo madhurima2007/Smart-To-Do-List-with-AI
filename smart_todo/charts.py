@@ -1,6 +1,7 @@
 from __future__ import annotations
 
-from pathlib import Path
+import base64
+from io import BytesIO
 
 import matplotlib
 
@@ -11,18 +12,23 @@ import matplotlib.pyplot as plt
 from .services import analytics_summary
 
 
-CHARTS_DIR = Path(__file__).resolve().parent.parent / "static" / "charts"
+def _figure_to_base64() -> str:
+    buffer = BytesIO()
+    plt.savefig(buffer, format="png", bbox_inches="tight")
+    plt.close()
+    buffer.seek(0)
+    encoded = base64.b64encode(buffer.read()).decode("ascii")
+    return f"data:image/png;base64,{encoded}"
 
 
 def generate_charts() -> dict[str, str]:
-    CHARTS_DIR.mkdir(parents=True, exist_ok=True)
     summary = analytics_summary()
-
-    daily_path = CHARTS_DIR / "tasks_per_day.png"
-    status_path = CHARTS_DIR / "status_breakdown.png"
 
     days = list(summary["tasks_per_day"].keys())
     counts = list(summary["tasks_per_day"].values())
+    if not days:
+        days = ["No data"]
+        counts = [0]
 
     plt.figure(figsize=(8, 4.5))
     plt.plot(days, counts, marker="o", color="#1f6feb", linewidth=2)
@@ -31,8 +37,7 @@ def generate_charts() -> dict[str, str]:
     plt.ylabel("Completed Tasks")
     plt.xticks(rotation=30, ha="right")
     plt.tight_layout()
-    plt.savefig(daily_path)
-    plt.close()
+    daily_chart = _figure_to_base64()
 
     labels = list(summary["status_breakdown"].keys())
     values = list(summary["status_breakdown"].values())
@@ -44,10 +49,9 @@ def generate_charts() -> dict[str, str]:
     plt.pie(values, labels=labels, autopct="%1.0f%%", startangle=90, colors=colors)
     plt.title("Completed vs Pending")
     plt.tight_layout()
-    plt.savefig(status_path)
-    plt.close()
+    status_chart = _figure_to_base64()
 
     return {
-        "daily_chart": daily_path.name,
-        "status_chart": status_path.name,
+        "daily_chart": daily_chart,
+        "status_chart": status_chart,
     }
