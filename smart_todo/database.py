@@ -1,11 +1,13 @@
 from __future__ import annotations
 
+import os
 import sqlite3
 from pathlib import Path
 
 
 BASE_DIR = Path(__file__).resolve().parent.parent
-DATA_DIR = BASE_DIR / "data"
+RUNTIME_ROOT = Path(os.getenv("SMART_TODO_DATA_DIR", "/tmp" if os.getenv("VERCEL") else BASE_DIR / "data"))
+DATA_DIR = RUNTIME_ROOT
 DB_PATH = DATA_DIR / "smart_todo.db"
 
 
