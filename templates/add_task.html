@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+
+{% block content %}
+<section class="card form-card">
+    <p class="eyebrow">Create Task</p>
+    <h2>Add a new task</h2>
+    <form method="post" class="task-form">
+        <label>
+            Title
+            <input type="text" name="title" required>
+        </label>
+        <label>
+            Description
+            <textarea name="description" rows="4"></textarea>
+        </label>
+        <label>
+            Priority
+            <select name="priority">
+                <option>High</option>
+                <option selected>Medium</option>
+                <option>Low</option>
+            </select>
+        </label>
+        <label>
+            Deadline
+            <input type="date" name="deadline">
+        </label>
+        <button type="submit" class="button primary">Save Task</button>
+    </form>
+</section>
+{% endblock %}

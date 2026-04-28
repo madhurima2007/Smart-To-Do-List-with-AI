@@ -1,0 +1,47 @@
+{% extends "base.html" %}
+
+{% block content %}
+<section class="card spotlight">
+    <p class="eyebrow">AI Suggestion</p>
+    <h2>What should you do first?</h2>
+    <p>{{ suggestion }}</p>
+</section>
+
+<section class="page-actions">
+    <a class="button primary" href="{{ url_for('add_task') }}">Add a New Task</a>
+    <a class="button secondary" href="{{ url_for('analytics') }}">Open Dashboard</a>
+</section>
+
+<section class="task-grid">
+    {% for task in tasks %}
+    <article class="card task-card {{ task.status }}">
+        <div class="task-head">
+            <h3>{{ task.title }}</h3>
+            <span class="badge {{ task.priority|lower }}">{{ task.priority }}</span>
+        </div>
+        <p>{{ task.description or "No description added." }}</p>
+        <p><strong>Deadline:</strong> {{ task.deadline or "No deadline" }}</p>
+        <p><strong>Status:</strong> {{ task.status }}</p>
+        {% if task.is_overdue %}
+        <p class="warning">This task is overdue.</p>
+        {% endif %}
+        <div class="task-actions">
+            {% if task.status != 'completed' %}
+            <form action="{{ url_for('mark_complete', task_id=task.id) }}" method="post" class="inline-form">
+                <input type="number" name="minutes_spent" min="0" placeholder="Minutes spent">
+                <button type="submit" class="button primary">Complete</button>
+            </form>
+            {% endif %}
+            <form action="{{ url_for('remove_task', task_id=task.id) }}" method="post">
+                <button type="submit" class="button danger">Delete</button>
+            </form>
+        </div>
+    </article>
+    {% else %}
+    <article class="card">
+        <h3>No tasks yet</h3>
+        <p>Add your first task to start tracking progress.</p>
+    </article>
+    {% endfor %}
+</section>
+{% endblock %}

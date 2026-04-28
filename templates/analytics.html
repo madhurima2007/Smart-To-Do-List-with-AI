@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+
+{% block content %}
+<section class="metrics">
+    <article class="card metric">
+        <p>Total Tasks</p>
+        <h2>{{ summary.total_tasks }}</h2>
+    </article>
+    <article class="card metric">
+        <p>Completion Rate</p>
+        <h2>{{ summary.completion_rate }}%</h2>
+    </article>
+    <article class="card metric">
+        <p>Average Time</p>
+        <h2>{{ summary.average_minutes }} min</h2>
+    </article>
+    <article class="card metric">
+        <p>Best Work Window</p>
+        <h2>{{ summary.best_window }}</h2>
+    </article>
+</section>
+
+<section class="charts">
+    <article class="card">
+        <h3>Tasks Completed Per Day</h3>
+        <img src="{{ url_for('static', filename='charts/' + charts.daily_chart) }}" alt="Tasks completed per day chart">
+    </article>
+    <article class="card">
+        <h3>Completed vs Pending</h3>
+        <img src="{{ url_for('static', filename='charts/' + charts.status_chart) }}" alt="Completed vs pending chart">
+    </article>
+</section>
+{% endblock %}
